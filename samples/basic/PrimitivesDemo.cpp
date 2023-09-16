@@ -11,6 +11,7 @@
 #include "vivid/primitives/AxesHelper.h"
 #include "vivid/primitives/CylinderGeometry.h"
 #include "vivid/primitives/BoneGeometry.h"
+#include "vivid/extras/ShaderImpl.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace vivid {
@@ -18,8 +19,8 @@ namespace vivid {
     public:
         PrimitivesDemoApp() : Application(800, 600, "cube demo") {
             // Load shaders
-            shader_ = std::make_shared<Shader>("SimpleColorShading.vert", "SimpleColorShading.frag");
-            helperShader_ = std::make_shared<Shader>("Transform.vert", "Color.frag");
+            shader_ = ShaderImpl::LoadShader("./shaders/SimpleColorShading.vert", "./shaders/SimpleColorShading.frag");
+            helperShader_ = ShaderImpl::GetVertexColoredShader();
 
             // Create plane
             auto planeGeometry = std::make_shared<PlaneGeometry>(2, 2, 3, 3);

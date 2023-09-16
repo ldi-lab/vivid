@@ -13,9 +13,9 @@ struct Uniform {
 
 class Shader {
 public:
-    Shader(const std::string &vertShaderName,
-              const std::string &fragShaderName,
-              const std::string &shaderDir = "./shaders/");
+    Shader();
+
+    Shader(const char* vertexShaderCode, const char* fragmentShaderCode);
 
     void Use() const;
 
@@ -40,6 +40,8 @@ public:
     }
 
 private:
+    void Create(const char* vertexShaderCode, const char* fragmentShaderCode);
+
     void ExtractAttributeLocations();
 
     void ExtractUniformLocations();

@@ -9,6 +9,7 @@
 #include "vivid/primitives/BoxGeometry.h"
 #include "vivid/primitives/SphereGeometry.h"
 #include "vivid/Fonts.hpp"
+#include "vivid/extras/ShaderImpl.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 #define STB_IMAGE_IMPLEMENTATION  //necessary for stb_image.h
@@ -18,44 +19,19 @@ namespace vivid {
     class ImGuiDemoApp : public Application {
     public:
         ImGuiDemoApp() : Application(960, 720, "cube demo") {
-            // Load shader
-            shader_ = std::make_shared<Shader>("SimpleColorShading.vert", "SimpleColorShading.frag");
-
-            // Create box
-            auto boxGeometry = std::make_shared<BoxGeometry>(1, 1, 1, 2, 2, 2);
-            box_ = std::make_shared<Mesh>(boxGeometry);
-
             // Load image
             int imgWidth, imgHeight, imgChannels;
             unsigned char *imgData = stbi_load("models/apple_logo.png", &imgWidth, &imgHeight, &imgChannels, 0);
 
             std::cout << "img width: " << imgWidth << ", " << imgHeight << ", " << imgChannels << std::endl;
 
-
             logoTexture_ = std::make_shared<Texture>(imgData, imgWidth, imgHeight, imgChannels);
-
-            // Camera
-            camera_ = std::make_shared<Camera>();
-            glm::mat4 view_mat = glm::lookAt(glm::vec3(6, 2, 0), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-            Eigen::Matrix4d Tcw = vivid::GlmUtils::glm2eigen<double>(view_mat);
-            camera_->SetTransform(Transform(Tcw.inverse()));
-
-            controls_ = std::make_shared<OrbitControls>(window_, camera_);
         }
 
         void Render() override {
             glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
             glEnable(GL_DEPTH_TEST);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-            controls_->Update();
-
-            // Bind shader
-            shader_->Use();
-
-            // Draw mesh
-            box_->GetTransform().Rotate(Eigen::Vector3d(0, 1, 0), 0.005);
-            box_->Draw(camera_, shader_);
 
             // imgui
 //            ImGui::StyleColorsDark();
@@ -232,14 +208,7 @@ namespace vivid {
 
     private:
 
-        std::shared_ptr<Shader> shader_;
-        std::shared_ptr<Mesh> box_;
-
         std::shared_ptr<Texture> logoTexture_;
-
-        CameraPtr camera_;
-
-        std::shared_ptr<OrbitControls> controls_;
 
         int selectedSubTab0_ = 0;
 

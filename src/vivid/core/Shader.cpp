@@ -8,22 +8,7 @@
 
 namespace vivid {
 
-std::string ReadShaderCode(const std::string& shaderPath) {
-    std::ifstream ifs(shaderPath, std::ios::in);
-    if (!ifs.is_open()) {
-        std::cerr << "failed to open shader file: " << shaderPath << "\n";
-        exit(-1);
-    }
-    std::stringstream ss;
-    ss << ifs.rdbuf();
-    std::string shaderCode = ss.str();
-    ifs.close();
-    return shaderCode;
-}
-
-
-bool CompileShader(GLuint shaderHandle, const std::string& shaderCodeStr) {
-    const char* shaderCode = shaderCodeStr.c_str();
+bool CompileShader(GLuint shaderHandle, const char* shaderCode) {
     glShaderSource(shaderHandle, 1, &shaderCode, nullptr);
     glCompileShader(shaderHandle);
 
@@ -42,28 +27,31 @@ bool CompileShader(GLuint shaderHandle, const std::string& shaderCodeStr) {
 }
 
 
-
-Shader::Shader(const std::string &vertShaderName,
-                      const std::string &fragShaderName,
-                      const std::string &shaderDir) {
+Shader::Shader() {
     programHandle_ = 0;
+}
 
-    // Read the vertex shader code from the file
-    std::string vShaderStr = ReadShaderCode(shaderDir + vertShaderName);
-    std::string fShaderStr = ReadShaderCode(shaderDir + fragShaderName);
+
+Shader::Shader(const char* vertexShaderCode, const char* fragmentShaderCode) {
+    programHandle_ = 0;
+    Create(vertexShaderCode, fragmentShaderCode);
+}
+
+
+void Shader::Create(const char *vertexShaderCode, const char *fragmentShaderCode) {
 
     // Create the shaders
     GLuint vertShaderID = glCreateShader(GL_VERTEX_SHADER);
     GLuint fragShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 
     // Compile vertex shader and check
-    if (!CompileShader(vertShaderID, vShaderStr)) {
+    if (!CompileShader(vertShaderID, vertexShaderCode)) {
         std::cerr << "failed to compile vertex shader!";
         exit(-1);
     }
 
     // Compile fragment shader and check
-    if (!CompileShader(fragShaderID, fShaderStr)) {
+    if (!CompileShader(fragShaderID, fragmentShaderCode)) {
         std::cerr << "failed to compile fragment shader!";
         exit(-1);
     }
@@ -94,7 +82,6 @@ Shader::Shader(const std::string &vertShaderName,
     glDeleteShader(fragShaderID);
 
     programHandle_ = programID;
-    std::cout << "successfully load shader: " << vertShaderName << " & " << fragShaderName << "\n";
 
     // Get attribute locations
     ExtractAttributeLocations();

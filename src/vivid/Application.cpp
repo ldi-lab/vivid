@@ -16,6 +16,8 @@ Application::Application(int windowWidth, int windowHeight, std::string  appName
         exit(-1);
     }
 
+    glEnable(GL_DEPTH_TEST);
+
     // This is necessary if we want to change point size when rendering in GL_POINTS mode.
     glEnable(GL_PROGRAM_POINT_SIZE);
 

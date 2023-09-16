@@ -7,6 +7,7 @@
 #include "vivid/OrbitControls.h"
 #include "vivid/utils/GlmUtils.h"
 #include "vivid/utils/json.hpp"
+#include "vivid/extras/ShaderImpl.h"
 #include <glm/gtc/matrix_transform.hpp>
 #define STB_IMAGE_IMPLEMENTATION  //necessary for stb_image.h
 #include "vivid/utils/stb_image.h"
@@ -41,7 +42,7 @@ public:
 
         // Load shader
         std::cout << "load shader...\n";
-        shader_ = std::make_shared<Shader>("SimpleShading.vert", "SimpleShading.frag");
+        shader_ = ShaderImpl::LoadShader("./shaders/SimpleShading.vert", "./shaders/SimpleShading.frag");
 
         // Mesh
         std::cout << "create mesh...\n";

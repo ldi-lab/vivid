@@ -9,6 +9,7 @@
 #include "vivid/primitives/BoxGeometry.h"
 #include "vivid/primitives/SphereGeometry.h"
 #include "vivid/extras/FrameBuffer.h"
+#include "vivid/extras/ShaderImpl.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace vivid {
@@ -20,9 +21,9 @@ namespace vivid {
             SetWindowResizable(false);
 
             // Load shader
-            shader_ = std::make_shared<Shader>("ShadowMapping.vert", "ShadowMapping.frag");
+            shader_ = ShaderImpl::LoadShader("./shaders/ShadowMapping.vert", "./shaders/ShadowMapping.frag");
 
-            lightDepthShader_ = std::make_shared<Shader>("DepthShader.vert", "DepthShader.frag");
+            lightDepthShader_ = ShaderImpl::LoadShader("./shaders/DepthShader.vert", "./shaders/DepthShader.frag");
 
             // Create plane
             auto planeGeometry = std::make_shared<PlaneGeometry>(2, 2, 3, 3);
@@ -48,7 +49,7 @@ namespace vivid {
             auto quadGeometry = std::make_shared<PlaneGeometry>(2, 2, 1, 1);
             quad_ = std::make_shared<Mesh>(quadGeometry);
 
-            quadShader_ = std::make_shared<Shader>("Passthrough.vert", "SimpleTexture.frag");
+            quadShader_ = ShaderImpl::LoadShader("./shaders/Passthrough.vert", "./shaders/SimpleTexture.frag");
 
 
             // Camera

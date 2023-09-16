@@ -11,6 +11,7 @@
 #define STB_IMAGE_IMPLEMENTATION  //necessary for stb_image.h
 #include "vivid/utils/stb_image.h"
 #include "vivid/extras/FrameBuffer.h"
+#include "vivid/extras/ShaderImpl.h"
 #include "vivid/primitives/PlaneGeometry.h"
 
 
@@ -48,7 +49,7 @@ namespace vivid {
 
             // Load shader
             std::cout << "load shader...\n";
-            shader_ = std::make_shared<Shader>("SimpleShading.vert", "SimpleShading.frag");
+            shader_ = ShaderImpl::LoadShader("./shaders/SimpleShading.vert", "./shaders/SimpleShading.frag");
 
             // Mesh
             std::cout << "create mesh...\n";
@@ -75,7 +76,7 @@ namespace vivid {
             // Quad
             auto quadGeometry = std::make_shared<PlaneGeometry>(2, 2, 1, 1);
             quad_ = std::make_shared<Mesh>(quadGeometry);
-            quadShader_ = std::make_shared<Shader>("Passthrough.vert", "WobbyTexture.frag");
+            quadShader_ = ShaderImpl::LoadShader("./shaders/Passthrough.vert", "./shaders/WobbyTexture.frag");
 
             controls_ = std::make_shared<OrbitControls>(window_, camera_, Eigen::Vector3d(0, 1, 0));
         }

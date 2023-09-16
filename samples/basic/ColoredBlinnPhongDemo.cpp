@@ -8,6 +8,7 @@
 #include "vivid/primitives/PlaneGeometry.h"
 #include "vivid/primitives/BoxGeometry.h"
 #include "vivid/primitives/SphereGeometry.h"
+#include "vivid/extras/ShaderImpl.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace vivid {
@@ -15,7 +16,8 @@ namespace vivid {
     public:
         ColoredBlinnPhongDemoApp() : Application(800, 600, "cube demo") {
             // Load shader
-            shader_ = std::make_shared<Shader>("BlinnPhongColored.vert", "BlinnPhongColored.frag");
+//            shader_ = ShaderImpl::LoadShader("./shaders/BlinnPhongColored.vert", "./shaders/BlinnPhongColored.frag");
+            shader_ = ShaderImpl::GetColoredBlinnPhongShader();
 
             // Create plane
             auto planeGeometry = std::make_shared<PlaneGeometry>(2, 2, 3, 3);
@@ -51,15 +53,16 @@ namespace vivid {
             shader_->Use();
 
             // set uniforms0
-            shader_->SetVec4("light.positionC", glm::vec4(1, 2, 5, 6));
+            shader_->SetVec3("light.positionC", glm::vec3(1, 1, 1));
             shader_->SetVec3("light.color", glm::vec3(1.0, 1.0, 1.0));
             shader_->SetFloat("light.intensity", 1);
+            shader_->SetInt("light.type", 0);
 
             shader_->SetVec3("material.diffuseColor", glm::vec3(0.7, 0.7, 0.7));
             shader_->SetVec3("material.specularColor", glm::vec3(1, 0, 0));
             shader_->SetFloat("material.shininess", 5);
 
-            shader_->SetVec3("envAmbientColor", glm::vec3(0.2, 0.2, 0.2));
+            shader_->SetVec3("ambientColor", glm::vec3(0.8, 0.8, 0.8));
 
             // Draw mesh
             plane_->GetTransform().Rotate(Eigen::Vector3d(0, 1, 0), 0.005);

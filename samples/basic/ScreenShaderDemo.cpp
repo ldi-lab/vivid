@@ -4,6 +4,7 @@
 #include "vivid/core/Camera.h"
 #include "vivid/core/Shader.h"
 #include "vivid/core/Attribute.h"
+#include "vivid/extras/ShaderImpl.h"
 #include "vivid/OrbitControls.h"
 #include "vivid/utils/GlmUtils.h"
 
@@ -50,18 +51,17 @@ namespace vivid {
 
 
             // Load shader
-            shader_ = std::make_shared<Shader>("TriangleScreenShader.vert", "TriangleScreenShader.frag");
+            shader_ = ShaderImpl::LoadShader("./shaders/TriangleScreenShader.vert", "./shaders/TriangleScreenShader.frag");
 
             triangle_ = std::make_shared<Mesh>(triangleGeometry);
 
             camera_ = std::make_shared<Camera>();
 
-
         }
 
         void Render() override {
             glClearColor(0.5f, 0.3f, 0.2f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             // Bind shader
             shader_->Use();

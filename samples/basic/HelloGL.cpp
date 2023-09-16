@@ -5,7 +5,6 @@
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
 #include <imgui/implot.h>
-#include "vivid/core/Shader.h"
 
 int main() {
     glfwInit();
@@ -33,9 +32,6 @@ int main() {
     ImGui::StyleColorsDark();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 130");
-
-    // Load Shader
-    vivid::Shader shader("BasicShading.vert", "BasicShading.frag");
 
     int barData[17] = {1, 2, 3, 4, 5, 4, 3, 2, 1, 2, 3, 4, 5, 4, 3, 2, 1};
 

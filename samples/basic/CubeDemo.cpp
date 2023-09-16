@@ -5,6 +5,7 @@
 #include "vivid/core/Shader.h"
 #include "vivid/OrbitControls.h"
 #include "vivid/utils/GlmUtils.h"
+#include "vivid/extras/ShaderImpl.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace vivid {
@@ -53,7 +54,7 @@ public:
         cubeGeometry->SetIndex(indices);
 
         // Load shader
-        shader_ = std::make_shared<Shader>("Transform.vert", "Color.frag");
+        shader_ = ShaderImpl::GetVertexColoredShader();
 
         // Mesh
         cube_ = std::make_shared<Mesh>(cubeGeometry, GL_TRIANGLES , 0);
@@ -72,17 +73,13 @@ public:
     }
 
     void Render() override {
-        glClearColor(0.5f, 0.3f, 0.2f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         controls_->Update();
 
         // Bind shader
         shader_->Use();
-
-        // Set uniforms
-        glm::mat4 mvp = camera_->GetProjectionMatrix() * camera_->GetViewMatrix() * model_mat_;
-        shader_->SetMat4("MVP", mvp);
 
         // Draw mesh
         cube_->Draw(camera_, shader_);
