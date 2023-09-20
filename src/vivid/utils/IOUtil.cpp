@@ -2,6 +2,8 @@
 #include <fstream>
 #include <sstream>
 #include <glm/glm.hpp>
+#define STB_IMAGE_IMPLEMENTATION  //necessary for stb_image.h
+#include "vivid/utils/stb_image.h"
 
 namespace vivid {
 
@@ -175,6 +177,11 @@ MeshPtr IOUtil::CreateMesh(const std::vector<unsigned int> &vertexIndices,
     auto geometry = std::make_shared<Geometry>(&positions, &uvs, &normals);
     auto mesh = std::make_shared<Mesh>(geometry);
     return mesh;
+}
+
+
+unsigned char* IOUtil::LoadImage(const std::string &filePath, int &width, int &height, int &channels) {
+    return stbi_load(filePath.c_str(), &width, &height, &channels, 0);
 }
 
 

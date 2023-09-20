@@ -28,6 +28,8 @@ public:
                               const std::vector<glm::vec2> &temp_uvs,
                               std::vector<glm::vec3> &temp_normals);
 
+    static unsigned char* LoadImage(const std::string& filePath, int& width, int& height, int& channels);
+
 };
 
 } // namespace

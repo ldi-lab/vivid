@@ -7,10 +7,10 @@
 #include "vivid/OrbitControls.h"
 #include "vivid/utils/GlmUtils.h"
 #include "vivid/utils/json.hpp"
+#include "vivid/utils/IOUtil.h"
 #include "vivid/extras/ShaderImpl.h"
 #include <glm/gtc/matrix_transform.hpp>
-#define STB_IMAGE_IMPLEMENTATION  //necessary for stb_image.h
-#include "vivid/utils/stb_image.h"
+
 
 
 namespace vivid {
@@ -21,7 +21,7 @@ public:
         LoadModel("./models/fox.json");
 
         // Load texture from image file
-        LoadTexture("./models/fox.jpg");
+        imgData_ = IOUtil::LoadImage("./models/fox.jpg", imgWidth_, imgHeight_, imgChannels_);
 
         // Create texture
         std::cout << "create texture...\n";
@@ -97,11 +97,6 @@ public:
         for (size_t i = 1; i < uvData_.size(); i += 2) {
             uvData_[i] = 1.0f - uvData_[i];
         }
-    }
-
-    void LoadTexture(const std::string& imgPath) {
-        imgData_ = stbi_load(imgPath.c_str(), &imgWidth_, &imgHeight_, &imgChannels_, 0);
-        std::cout << "img: " << imgWidth_ << " x " << imgHeight_ << " x " << imgChannels_ << "\n";
     }
 
 private:
