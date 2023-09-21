@@ -24,6 +24,8 @@ public:
 
     void SetWindowResizable(bool resizable);
 
+    void SetWindowIcon(unsigned char* data, int width, int height);
+
     virtual void Render();
 
     bool ShouldClose();

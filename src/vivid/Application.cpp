@@ -94,6 +94,19 @@ void Application::SetWindowResizable(bool resizable) {
 }
 
 
+void Application::SetWindowIcon(unsigned char *data, int width, int height) {
+    if (data == nullptr) {
+        glfwSetWindowIcon(window_, 0, nullptr);
+        return;
+    }
+    GLFWimage images[1];
+    images[0].width = width;
+    images[0].height = height;
+    images[0].pixels = data;
+    glfwSetWindowIcon(window_, 1, images);
+}
+
+
 bool Application::ShouldClose() {
     return glfwWindowShouldClose(window_);
 }
