@@ -59,7 +59,24 @@ public:
         uvs.push_back(1);
 
         // Now rotate the vertices
-
+        Eigen::Vector3f axis = Eigen::Vector3f::UnitZ().cross(direction_).normalized();
+        float angle = std::acos(Eigen::Vector3f::UnitZ().dot(direction_));
+        Eigen::AngleAxisf rotation(angle, axis);
+        for (int i = 0; i < positions.size() / 3; i++) {
+            Eigen::Vector3f pos(positions[3*i], positions[3*i+1], positions[3*i+2]);
+            pos = rotation * pos;
+            positions[3*i] = pos.x();
+            positions[3*i+1] = pos.y();
+            positions[3*i+2] = pos.z();
+        }
+        // rotate the normals
+        for (int i = 0; i < normals.size() / 3; i++) {
+            Eigen::Vector3f normal(normals[3*i], normals[3*i+1], normals[3*i+2]);
+            normal = rotation * normal;
+            normals[3*i] = normal.x();
+            normals[3*i+1] = normal.y();
+            normals[3*i+2] = normal.z();
+        }
 
         // indices
         const unsigned int lastIndex = positions.size() / 3 - 1;
