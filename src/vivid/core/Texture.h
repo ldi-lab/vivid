@@ -20,8 +20,18 @@ public:
 
     void Bind() const;
 
+    void Update(unsigned char *data);
+
     unsigned int GetHandle() const {
         return textureHandle_;
+    }
+
+    int GetWidth() const {
+        return width_;
+    }
+
+    int GetHeight() const {
+        return height_;
     }
 
 

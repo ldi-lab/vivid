@@ -40,4 +40,11 @@ Texture::Texture(unsigned char *data, int width, int height, int channels,
 }
 
 
+void Texture::Update(unsigned char *data) {
+    glBindTexture(GL_TEXTURE_2D, textureHandle_);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width_, height_, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+
 } //namespace vivid
