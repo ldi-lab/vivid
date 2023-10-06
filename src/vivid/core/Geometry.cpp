@@ -4,7 +4,6 @@
 
 #include "Geometry.h"
 #include <glad/glad.h>
-
 #include <utility>
 
 namespace vivid {
@@ -34,6 +33,48 @@ void Geometry::AddAttribute(std::shared_ptr<Attribute> attr) {
 
 void Geometry::SetIndex(std::vector<unsigned int> &indices, bool useMove) {
     indices_ = useMove ? std::move(indices) : indices;
+}
+
+
+void Geometry::Translate(float x, float y, float z) {
+    if (attributes_.find("position") == attributes_.end()) {
+        return;
+    }
+    std::vector<float> positions = attributes_["position"]->GetData();
+    for (int i = 0; i < positions.size(); i += 3) {
+        positions[i] += x;
+        positions[i + 1] += y;
+        positions[i + 2] += z;
+    }
+    attributes_["position"]->SetData(positions);
+}
+
+
+void Geometry::Rotate(float angle, const Eigen::Vector3f &axis) {
+    Eigen::AngleAxisf rotation(angle, axis);
+    if (attributes_.find("position") != attributes_.end()) {
+        std::vector<float> positions = attributes_["position"]->GetData();
+        for (int i = 0; i < positions.size(); i += 3) {
+            Eigen::Vector3f v(positions[i], positions[i + 1], positions[i + 2]);
+            v = rotation * v;
+            positions[i] = v.x();
+            positions[i + 1] = v.y();
+            positions[i + 2] = v.z();
+        }
+        attributes_["position"]->SetData(positions);
+    }
+
+    if (attributes_.find("normal") != attributes_.end()) {
+        std::vector<float> normals = attributes_["normal"]->GetData();
+        for (int i = 0; i < normals.size(); i += 3) {
+            Eigen::Vector3f v(normals[i], normals[i + 1], normals[i + 2]);
+            v = rotation * v;
+            normals[i] = v.x();
+            normals[i + 1] = v.y();
+            normals[i + 2] = v.z();
+        }
+        attributes_["normal"]->SetData(normals);
+    }
 }
 
 

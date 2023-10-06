@@ -4,6 +4,7 @@
 #include <map>
 #include <memory>
 #include <glad/glad.h>
+#include <Eigen/Dense>
 #include "Attribute.h"
 #include "Shader.h"
 
@@ -21,6 +22,10 @@ public:
     void AddAttribute(std::shared_ptr<Attribute> attr);
 
     void SetIndex(std::vector<unsigned int> &indices, bool useMove = false);
+
+    void Translate(float x, float y, float z);
+
+    void Rotate(float angle, const Eigen::Vector3f &axis);
 
     // Submit this geometry to GPU.
     unsigned int SubmitToGPU(std::shared_ptr<Shader> program);
