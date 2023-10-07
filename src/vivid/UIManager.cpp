@@ -36,17 +36,21 @@ void UIManager::LoadFonts() {
     io.Fonts->AddFontFromMemoryTTF((void*)poppinsFont, sizeof(poppinsFont), 18, &font_cfg);
 
     // Icon font
+    float baseFontSize = 20.0f; // 13.0f is the size of the default font. Change to the font size you use.
+    float iconFontSize = baseFontSize * 2.0f / 3.0f; //
     static const ImWchar icons_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
     ImFontConfig icons_config;
     icons_config.MergeMode = true;
     icons_config.PixelSnapH = true;
-    icons_config.FontDataOwnedByAtlas = false;
-    io.Fonts->AddFontFromMemoryTTF((void*)fontAwesome, sizeof(fontAwesome), 18, &icons_config, icons_ranges);
+    icons_config.GlyphMinAdvanceX = iconFontSize;
+    io.Fonts->AddFontFromMemoryTTF((void*)s_fa_solid_900_ttf, sizeof(s_fa_solid_900_ttf), iconFontSize, &icons_config, icons_ranges);
+    io.Fonts->AddFontFromMemoryTTF((void*)s_fa_regular_400_ttf, sizeof(s_fa_regular_400_ttf), iconFontSize, &icons_config, icons_ranges);
+    io.Fonts->AddFontFromMemoryTTF((void*)s_fa_brands_400_ttf, sizeof(s_fa_brands_400_ttf), iconFontSize, &icons_config, icons_ranges);
 
     // Big font
     ImFontConfig bigFontCfg;
     bigFontCfg.FontDataOwnedByAtlas = false; // if true it will try to free memory and fail
-    bigFont_ = io.Fonts->AddFontFromMemoryTTF((void*)poppinsFont, sizeof(poppinsFont), 24, &bigFontCfg);
+    bigFont_ = io.Fonts->AddFontFromMemoryTTF((void*)poppinsFont, sizeof(poppinsFont), 20, &bigFontCfg);
 
 }
 

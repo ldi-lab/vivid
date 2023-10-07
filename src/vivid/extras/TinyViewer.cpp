@@ -121,7 +121,7 @@ void TinyViewer::RenderRightPanel() {
     ImGui::SetCursorPosY(ImGui::GetCursorPosY()-30);
     std::vector<std::string> tabNames = {ICON_FA_CROSSHAIRS,
                                          ICON_FA_EYE ,
-                                         ICON_FA_COG,
+                                         ICON_FA_WIFI,
                                          ICON_FA_BOOK};
     ImGui::SetCursorPosX(ImGui::GetCursorPosX()+18);
     ImguiHelper::DrawTabHorizontally("tabs", {ImGui::GetContentRegionAvail().x-60, 50}, tabNames, selectedMenuTab_);
@@ -219,7 +219,7 @@ void TinyViewer::RenderMenus() {
     const std::vector<std::string> menus = {
             ICON_FA_CROSSHAIRS,
             ICON_FA_EYE ,
-            ICON_FA_COG,
+            ICON_FA_WIFI,
             ICON_FA_BOOK
     };
     const std::vector<std::string> tooptips = {
