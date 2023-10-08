@@ -1101,6 +1101,29 @@ bool ImGui::ImageButton(ImTextureID user_texture_id, const ImVec2& size, const I
 }
 #endif // #ifndef IMGUI_DISABLE_OBSOLETE_FUNCTIONS
 
+
+void ImGui::ToggleButton(const char *label, bool *v, float height) {
+    ImVec4* colors = ImGui::GetStyle().Colors;
+    ImVec2 p = ImGui::GetCursorScreenPos();
+    ImDrawList* draw_list = ImGui::GetWindowDrawList();
+
+    float width = height * 1.55f;
+    float radius = height * 0.50f;
+
+    ImGui::InvisibleButton(label, ImVec2(width, height));
+    if (ImGui::IsItemClicked()) *v = !*v;
+    ImGuiContext& gg = *GImGui;
+    float ANIM_SPEED = 0.085f;
+    if (gg.LastActiveId == gg.CurrentWindow->GetID(label))// && g.LastActiveIdTimer < ANIM_SPEED)
+        float t_anim = ImSaturate(gg.LastActiveIdTimer / ANIM_SPEED);
+    if (ImGui::IsItemHovered())
+        draw_list->AddRectFilled(p, ImVec2(p.x + width, p.y + height), ImGui::GetColorU32(*v ? ImVec4(0.4, 0.8, 0.6, 1.0) : ImVec4(0.78f, 0.78f, 0.78f, 1.0f)), height * 0.5f);
+    else
+        draw_list->AddRectFilled(p, ImVec2(p.x + width, p.y + height), ImGui::GetColorU32(*v ? ImVec4(0.0,1.0,0.6,1) : ImVec4(0.85f, 0.85f, 0.85f, 1.0f)), height * 0.50f);
+    draw_list->AddCircleFilled(ImVec2(p.x + radius + (*v ? 1 : 0) * (width - radius * 2.0f), p.y + radius), radius - 1.5f, IM_COL32(255, 255, 255, 255));
+}
+
+
 bool ImGui::Checkbox(const char* label, bool* v)
 {
     ImGuiWindow* window = GetCurrentWindow();
