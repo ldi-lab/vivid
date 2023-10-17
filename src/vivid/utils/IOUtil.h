@@ -13,12 +13,14 @@ public:
 
     static bool LoadObj(const std::string& filePath,
                         std::vector<float>& positions,
-                        std::vector<float> &normals,
-                        std::vector<float> &uvs);
+                        std::vector<float> &normals);
 
 
     static bool LoadObj(const std::string& filePath,
                         std::map<std::string, MeshPtr> &meshes);
+
+    static bool ReadObjLegacy(const std::string &filePath,
+                              MeshPtr &mesh);
 
 
     static MeshPtr CreateMesh(const std::vector<unsigned int> &vertexIndices,
