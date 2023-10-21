@@ -89,9 +89,8 @@ bool IOUtil::LoadObj(const std::string &filePath, std::map<std::string, MeshPtr>
         return false;
     }
 
-    std::vector<unsigned int> vertexIndices, uvIndices, normalIndices;
+    std::vector<unsigned int> vertexIndices, normalIndices;
     std::vector<glm::vec3> temp_vertices;
-    std::vector<glm::vec2> temp_uvs;
     std::vector<glm::vec3> temp_normals;
 
     std::string aline, s, s1, lastName;
@@ -107,15 +106,13 @@ bool IOUtil::LoadObj(const std::string &filePath, std::map<std::string, MeshPtr>
         if (s == "o") {
             ss >> s;
             if (!lastName.empty() && !temp_vertices.empty()) {
-                auto mesh = CreateMesh(vertexIndices, uvIndices, normalIndices, temp_vertices, temp_uvs, temp_normals);
+                auto mesh = CreateMesh(vertexIndices, normalIndices, temp_vertices, temp_normals);
                 meshes[lastName] = mesh;
             }
             lastName = s;
-            temp_vertices.clear();
-            temp_uvs.clear();
-            temp_normals.clear();
+//            temp_vertices.clear();
+//            temp_normals.clear();
             vertexIndices.clear();
-            uvIndices.clear();
             normalIndices.clear();
         }
 
@@ -125,9 +122,6 @@ bool IOUtil::LoadObj(const std::string &filePath, std::map<std::string, MeshPtr>
         } else if (s == "vn") {
             ss >> x >> y >> z;
             temp_normals.emplace_back(x, y, z);
-        }  else if (s == "vt") {
-            ss >> x >> y;
-            temp_uvs.emplace_back(x, y);
         }
         else if (s == "f") {  // face
             for (int i = 0; i < 3; i++) {
@@ -136,7 +130,6 @@ bool IOUtil::LoadObj(const std::string &filePath, std::map<std::string, MeshPtr>
                 getline(stream, s1, '/');
                 vertexIndices.push_back( stoi(s1) - 1);
                 getline(stream, s1, '/');
-                uvIndices.push_back( stoi(s1) - 1);
                 getline(stream, s1, '/');
                 normalIndices.push_back( stoi(s1) - 1);
             }
@@ -144,7 +137,7 @@ bool IOUtil::LoadObj(const std::string &filePath, std::map<std::string, MeshPtr>
     }
 
     if (!lastName.empty() && !temp_vertices.empty()) {
-        auto mesh = CreateMesh(vertexIndices, uvIndices, normalIndices, temp_vertices, temp_uvs, temp_normals);
+        auto mesh = CreateMesh(vertexIndices, normalIndices, temp_vertices, temp_normals);
         meshes[lastName] = mesh;
     }
 
@@ -153,27 +146,22 @@ bool IOUtil::LoadObj(const std::string &filePath, std::map<std::string, MeshPtr>
 
 
 MeshPtr IOUtil::CreateMesh(const std::vector<unsigned int> &vertexIndices,
-                           const std::vector<unsigned int> &uvIndices,
                            const std::vector<unsigned int> &normalIndices,
                            const std::vector<glm::vec3> &temp_vertices,
-                           const std::vector<glm::vec2> &temp_uvs,
                            std::vector<glm::vec3> &temp_normals) {
-    std::vector<float> positions, normals, uvs;
+    std::vector<float> positions, normals;
     for (size_t i = 0; i < vertexIndices.size(); ++i) {
         const auto& position = temp_vertices[vertexIndices[i]];
         const auto& normal = temp_normals[normalIndices[i]];
-        const auto& uv = temp_uvs[uvIndices[i]];
         positions.push_back(position.x);
         positions.push_back(position.y);
         positions.push_back(position.z);
         normals.push_back(normal.x);
         normals.push_back(normal.y);
         normals.push_back(normal.z);
-        uvs.push_back(uv.x);
-        uvs.push_back(uv.y);
     }
 
-    auto geometry = std::make_shared<Geometry>(&positions, &uvs, &normals);
+    auto geometry = std::make_shared<Geometry>(&positions, nullptr, &normals);
     auto mesh = std::make_shared<Mesh>(geometry);
     return mesh;
 }

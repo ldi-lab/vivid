@@ -23,6 +23,8 @@ public:
 
     static ShaderPtr GetToonShader();
 
+    static ShaderPtr GetGroundShader();
+
     static ShaderPtr LoadShader(const std::string& vertexShaderPath, const std::string& fragShaderPath);
 
 };

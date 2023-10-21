@@ -24,10 +24,8 @@ public:
 
 
     static MeshPtr CreateMesh(const std::vector<unsigned int> &vertexIndices,
-                              const std::vector<unsigned int> &uvIndices,
                               const std::vector<unsigned int > &normalIndices,
                               const std::vector<glm::vec3> &temp_vertices,
-                              const std::vector<glm::vec2> &temp_uvs,
                               std::vector<glm::vec3> &temp_normals);
 
     static unsigned char* LoadImage(const std::string& filePath, int& width, int& height, int& channels);

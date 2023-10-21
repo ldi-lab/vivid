@@ -165,6 +165,53 @@ void main() {
 
 
 
+// ============= colored basic shader =============
+const std::string ground_vs = R"(
+#version 330 core
+
+// Input vertex data
+layout (location = 0) in vec3 position;
+layout (location = 1) in vec3 normal;
+layout (location = 2) in vec2 texCoord0;
+
+// Output data
+out vec2 vUv;
+out vec3 vNormal;   // normal vector in camera space
+
+// Uniforms
+uniform mat4 MVP;
+uniform mat3 normalMatrix;  // inverse transpose of modelview matrix, for transforming normals from object space to camera space
+
+void main() {
+    vUv = texCoord0;
+    vNormal = normalize(normalMatrix * normal);
+    gl_Position = MVP * vec4(position, 1.0);
+}
+)";
+
+const std::string ground_fs = R"(
+#version 330 core
+
+// input values from the vertex shaders
+in vec2 vUv;
+in vec3 vNormal;
+
+// output data
+out vec3 color;
+
+// texture
+uniform sampler2D diffuseMap;
+
+void main() {
+    vec3 light = vec3(0.5, 0.2, 1.0);
+    vec3 normal = normalize(vNormal);
+    vec3 tex = texture(diffuseMap, vUv).rgb;
+    float shading = dot(normal, light) * 0.15;
+    color = 0.5 * tex + shading;
+}
+)";
+
+
 
 ShaderPtr ShaderImpl::GetVertexColoredShader() {
     static ShaderPtr shader = std::make_shared<Shader>(vertex_colored_vs.c_str(), vertex_colored_fs.c_str());
@@ -178,6 +225,11 @@ ShaderPtr ShaderImpl::GetColoredBasicShader() {
 
 ShaderPtr ShaderImpl::GetColoredBlinnPhongShader() {
     static ShaderPtr shader = std::make_shared<Shader>(colored_blinn_phong_vs.c_str(), colored_blinn_phong_fs.c_str());
+    return shader;
+}
+
+ShaderPtr ShaderImpl::GetGroundShader() {
+    static ShaderPtr shader = std::make_shared<Shader>(ground_vs.c_str(), ground_fs.c_str());
     return shader;
 }
 
