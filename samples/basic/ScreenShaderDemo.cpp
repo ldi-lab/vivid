@@ -11,7 +11,7 @@
 namespace vivid {
     class TriangleScreenShaderApp : public Application {
     public:
-        TriangleScreenShaderApp() : Application(1280, 800, "triangle screen shader") {
+        TriangleScreenShaderApp() : Application(800, 600, "triangle screen shader") {
             // Rather than using a plane (two triangles) to cover the viewport here is a
             // triangle that includes -1 to 1 range for 'position', and 0 to 1 range for 'uv'.
             // Excess will be out of the viewport.

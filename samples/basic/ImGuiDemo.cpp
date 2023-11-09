@@ -67,7 +67,7 @@ namespace vivid {
                 ImGui::PushFont(ui_.bigFont_);
                 ImGui::SameLine();
                 ImGui::SetCursorPosY(11); // dont know how to center it sorry :>
-                ImGui::TextUnformatted("Big Paste");
+                ImGui::TextUnformatted("Apple Logo");
                 ImGui::PopFont();
                 ImGui::EndChild();
 
@@ -93,8 +93,8 @@ namespace vivid {
             std::vector<std::string> tabNames = {
                     ICON_FA_CROSSHAIRS  " LegitBot",
                     ICON_FA_EYE " Visuals",
-                    ICON_FA_COG " Misc",
-                    ICON_FA_SAVE " Configs"
+                    ICON_FA_DISCORD " Misc",
+                    ICON_FA_UPLOAD " Configs"
             };
             static int selectedTab = 0;
             for (int i = 0; i < tabNames.size(); i++) {

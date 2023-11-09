@@ -56,7 +56,7 @@ public:
         Eigen::Matrix4d Tcw = vivid::GlmUtils::glm2eigen<double>(view_mat);
         camera_->SetTransform(Transform(Tcw.inverse()));
 
-        controls_ = std::make_shared<OrbitControls>(window_, camera_);
+        controls_ = std::make_shared<OrbitControls>(window_, camera_, Eigen::Vector3d(0,1,0), UpDir::Y);
     }
 
     void Render() override {

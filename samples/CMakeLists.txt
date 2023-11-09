@@ -2,8 +2,6 @@ link_libraries(vivid glfw glad)
 
 add_executable(HelloGL basic/HelloGL.cpp)
 
-add_executable(CubeDemo basic/CubeDemo.cpp)
-
 add_executable(ScreenShaderDemo basic/ScreenShaderDemo.cpp)
 
 add_executable(LoadJsonDemo basic/LoadJsonDemo.cpp)
