@@ -1,5 +1,22 @@
 # vivid
-Lightweight & easy to use 3D rendering library.
+Lightweight & easy to use 3D visualization library.
+
+## Examples
+
+#### ImGUI 
+![ ](assets/docs/imgui.png)
+
+#### Primitives
+![ ](assets/docs/primitives.png)
+
+#### Screen gradient
+![ ](assets/docs/screen_gradient.png)
+
+#### Frame buffer
+![ ](assets/docs/frame_buffer.png)
+
+#### Shadow mapping
+![ ](assets/docs/shadow_mapping.png)
 
 
 ## Shader
