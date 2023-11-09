@@ -11,16 +11,16 @@ public:
 
     bool Check();
 
+    void Bind();
+
+    void Unbind();
+
+private:
     void CreateColorTexture();
 
     void CreateDepthTexture();
 
     void SetupDrawables();
-
-    void Bind();
-
-    void Unbind();
-
 
 public:
     int width_;

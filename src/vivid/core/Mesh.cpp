@@ -39,6 +39,9 @@ void Mesh::Draw(std::shared_ptr<Camera> cam, std::shared_ptr<Shader> shader) {
         if (shader->HasUniform("modelViewMatrix")) {
             shader->SetMat4("modelViewMatrix", modelViewMatrix);
         }
+        if (shader->HasUniform("projectionMatrix")) {
+            shader->SetMat4("projectionMatrix", cam->GetProjectionMatrix());
+        }
         if (shader->HasUniform("MVP")) {
             shader->SetMat4("MVP", mvp);
         }

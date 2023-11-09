@@ -28,6 +28,10 @@ public:
                               const std::vector<glm::vec3> &temp_vertices,
                               std::vector<glm::vec3> &temp_normals);
 
+    static MeshPtr LoadJsonModel(const std::string &filePath);
+
+    static TexturePtr LoadTexture(const std::string &imgPath);
+
     static unsigned char* LoadImage(const std::string& filePath, int& width, int& height, int& channels);
 
 };

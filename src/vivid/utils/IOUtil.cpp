@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #define STB_IMAGE_IMPLEMENTATION  //necessary for stb_image.h
 #include "vivid/utils/stb_image.h"
+#include "vivid/utils/json.hpp"
 
 namespace vivid {
 
@@ -164,6 +165,46 @@ MeshPtr IOUtil::CreateMesh(const std::vector<unsigned int> &vertexIndices,
     auto geometry = std::make_shared<Geometry>(&positions, nullptr, &normals);
     auto mesh = std::make_shared<Mesh>(geometry);
     return mesh;
+}
+
+
+MeshPtr IOUtil::LoadJsonModel(const std::string &filePath) {
+    std::ifstream ifs(filePath);
+    if (!ifs.is_open()) {
+        std::cerr << "failed to open file: " << filePath << std::endl;
+        exit(-1);
+    }
+    auto js = nlohmann::json::parse(ifs);
+    ifs.close();
+
+    std::vector<float> positions = js["position"].get<std::vector<float> >();
+    std::vector<float> normals = js["normal"].get<std::vector<float> >();
+    std::vector<float> uvs = js["uv"].get<std::vector<float> >();
+    std::cout << "position: " << positions.size() << ", normal: " << normals.size()
+              << ", uv: " << uvs.size() << "\n";
+
+    // Fix UV.y
+    for (size_t i = 1; i < uvs.size(); i += 2) {
+        uvs[i] = 1.0f - uvs[i];
+    }
+
+    // create mesh
+    auto geo = std::make_shared<Geometry>(&positions, &uvs, &normals);
+    auto mesh = std::make_shared<Mesh>(geo);
+    return mesh;
+}
+
+
+TexturePtr IOUtil::LoadTexture(const std::string &imgPath) {
+    int width, height, channels;
+    unsigned char* imgData = LoadImage(imgPath, width, height, channels);
+    if (imgData == nullptr) {
+        std::cerr << "failed to load image: " << imgPath << std::endl;
+        exit(-1);
+    }
+    auto texture = std::make_shared<Texture>(imgData, width, height, channels);
+    stbi_image_free(imgData);
+    return texture;
 }
 
 

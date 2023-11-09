@@ -212,6 +212,30 @@ void main() {
 )";
 
 
+const std::string depth_vs = R"(
+#version 330 core
+
+layout(location = 0) in vec3 position;
+
+uniform mat4 MVP;
+
+void main() {
+    gl_Position = MVP * vec4(position, 1);
+}
+)";
+
+
+const std::string depth_fs = R"(
+#version 330 core
+
+// output data
+layout(location = 0) out float fragmentDepth;
+
+void main() {
+    fragmentDepth = gl_FragCoord.z;
+}
+)";
+
 
 ShaderPtr ShaderImpl::GetVertexColoredShader() {
     static ShaderPtr shader = std::make_shared<Shader>(vertex_colored_vs.c_str(), vertex_colored_fs.c_str());
@@ -232,6 +256,12 @@ ShaderPtr ShaderImpl::GetGroundShader() {
     static ShaderPtr shader = std::make_shared<Shader>(ground_vs.c_str(), ground_fs.c_str());
     return shader;
 }
+
+ShaderPtr ShaderImpl::GetDepthShader() {
+    static ShaderPtr shader = std::make_shared<Shader>(depth_vs.c_str(), depth_fs.c_str());
+    return shader;
+}
+
 
 //ShaderPtr ShaderImpl::GetTexturedBasicShader() {
 //    static ShaderPtr shader = std::make_shared<Shader>(textured_basic_vs, textured_basic_fs);

@@ -25,6 +25,8 @@ public:
 
     static ShaderPtr GetGroundShader();
 
+    static ShaderPtr GetDepthShader();
+
     static ShaderPtr LoadShader(const std::string& vertexShaderPath, const std::string& fragShaderPath);
 
 };
