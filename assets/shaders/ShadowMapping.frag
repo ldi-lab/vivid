@@ -2,12 +2,16 @@
 
 // Interpolated values from the vertex shaders
 in vec4 vShadowCoord;
+in vec2 vUv;
 
 // Ouput data
 layout(location = 0) out vec3 color;
 
 // Values that stay constant for the whole mesh.
 uniform sampler2D shadowMap;
+uniform sampler2D diffuseMap;
+uniform bool hasDiffuseMap = false;
+uniform vec3 diffuseColor;
 
 vec2 poissonDisk[16] = vec2[](
     vec2( -0.94201624, -0.39906216 ),
@@ -29,6 +33,10 @@ vec2 poissonDisk[16] = vec2[](
 );
 
 void main(){
+    vec3 tex = diffuseColor;
+    if (hasDiffuseMap) {
+        tex = texture(diffuseMap, vUv).rgb;
+    }
 
     // the vShadowCoord.z / vShadowCoord.w is between [-1, 1], we need to
     // convert it to [0, 1], which is the range of shaowMap texture
@@ -54,17 +62,15 @@ void main(){
         // being fully in the shadow will eat up 4*0.2 = 0.8
         // 0.2 potentially remain, which is quite dark.
         float depth_shadowMap = texture(shadowMap, shadowCoord.xy + poissonDisk[index]/700.0).r;
-        visibility -= 0.2 * (1.0 - step(shadowCoord.z - bias, depth_shadowMap));
+        visibility -= 0.16 * (1.0 - step(shadowCoord.z - bias, depth_shadowMap));
     }
 
-//    float visibility = step(depth_shadowCoord - 0.005, depth_shadowMap);
+//    float depth_shadowMap = texture(shadowMap, shadowCoord.xy).r;
+//    visibility = mix(0.2, 1.0, step(shadowCoord.z - 0.001, depth_shadowMap));
 
     // Light emission properties
     vec3 lightColor = vec3(1,1,1);
 
-    // Material properties
-    vec3 materialColor = vec3(1.0, 0.8, 0.2);
-
-    color = visibility * materialColor * lightColor;
+    color = visibility * tex * lightColor;
 
 }
