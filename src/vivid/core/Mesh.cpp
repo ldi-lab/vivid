@@ -29,6 +29,7 @@ void Mesh::Draw(std::shared_ptr<Camera> cam, std::shared_ptr<Shader> shader) {
         glm::mat4 modelViewMatrix = viewMatrix * modelMatrix;
         glm::mat4 mvp = cam->GetProjectionMatrix() * modelViewMatrix;
         glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelViewMatrix)));
+        glm::mat3 normalMatrixW = glm::transpose(glm::inverse(glm::mat3(modelMatrix)));
 
         if (shader->HasUniform("modelMatrix")) {
             shader->SetMat4("modelMatrix", modelMatrix);
@@ -47,6 +48,9 @@ void Mesh::Draw(std::shared_ptr<Camera> cam, std::shared_ptr<Shader> shader) {
         }
         if (shader->HasUniform("normalMatrix")) {
             shader->SetMat3("normalMatrix", normalMatrix);
+        }
+        if (shader->HasUniform("normalMatrixW")) {
+            shader->SetMat3("normalMatrixW", normalMatrixW);
         }
     }
 

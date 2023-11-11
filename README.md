@@ -18,6 +18,8 @@ Lightweight & easy to use 3D visualization library.
 #### Shadow mapping
 ![ ](assets/docs/shadow_mapping.png)
 
+#### Basic PBR
+![ ](assets/docs/basic_pbr.png)
 
 ## Shader
 Supported names of vertex attributes include:

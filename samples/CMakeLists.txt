@@ -17,5 +17,9 @@ add_executable(FrameBufferDemo basic/FrameBufferDemo.cpp)
 add_executable(ShadowMapDemo basic/ShadowMapDemo.cpp)
 
 add_executable(FogDemo basic/FogDemo.cpp)
+
+add_executable(BasicPbrDemo basic/BasicPbrDemo.cpp)
+
+
 file(COPY ../assets/shaders DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY ../assets/models DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
