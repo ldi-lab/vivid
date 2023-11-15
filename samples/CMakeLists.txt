@@ -22,6 +22,8 @@ add_executable(BasicPbrDemo basic/BasicPbrDemo.cpp)
 
 add_executable(PbrDemo basic/PbrDemo.cpp)
 
+add_executable(PointCloudDemo basic/PointCloudDemo.cpp)
+
 
 file(COPY ../assets/shaders DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY ../assets/models DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

@@ -24,6 +24,9 @@ Lightweight & easy to use 3D visualization library.
 #### PBR and IBL
 ![ ](assets/docs/pbr_ibl.png)
 
+#### Point Cloud
+![ ](assets/docs/point_cloud.png)
+
 ## Shader
 Supported names of vertex attributes include:
 
