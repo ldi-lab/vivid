@@ -48,7 +48,7 @@ public:
 
         // Set camera position uniform
         Eigen::Vector3d camPos = camera_->GetTransform().Position();
-        shader_->SetVec3("uCamPosW", glm::vec3(0, 0, 3));
+        shader_->SetVec3("uCamPosW", glm::vec3(camPos.x(), camPos.y(), camPos.z()));
 
         // Set light uniforms
         shader_->SetVec3("uLightPositions[0]", glm::vec3(2.0, 2.0, 3.0));
