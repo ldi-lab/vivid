@@ -21,6 +21,9 @@ Lightweight & easy to use 3D visualization library.
 #### Basic PBR
 ![ ](assets/docs/basic_pbr.png)
 
+#### PBR and IBL
+![ ](assets/docs/pbr_ibl.png)
+
 ## Shader
 Supported names of vertex attributes include:
 
