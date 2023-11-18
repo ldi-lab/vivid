@@ -9,6 +9,7 @@
 #include "vivid/primitives/BoxGeometry.h"
 #include "vivid/primitives/SphereGeometry.h"
 #include "vivid/primitives/AxesHelper.h"
+#include "vivid/primitives/GridHelper.h"
 #include "vivid/primitives/CylinderGeometry.h"
 #include "vivid/primitives/BoneGeometry.h"
 #include "vivid/extras/ShaderImpl.h"
@@ -40,6 +41,11 @@ namespace vivid {
             // Axes helper
             auto axesGeometry = std::make_shared<AxesHelper>(3);
             axes_ = std::make_shared<Mesh>(axesGeometry, GL_LINES);
+
+            // Grid Helper
+            auto gridGeometry = std::make_shared<GridHelper>(0.5f, 100, 5, glm::vec3(0.5), glm::vec3(0.7));
+            grid_ = std::make_shared<Mesh>(gridGeometry, GL_LINES);
+            grid_->GetTransform().Rotate(Eigen::Vector3d(1, 0, 0), EIGEN_PI/2);
 
             // Cylinder
             auto cylinderGeometry = std::make_shared<CylinderGeometry>(0.5, 0.2, 1, 12, 4);
@@ -82,6 +88,7 @@ namespace vivid {
             // Draw helper
             helperShader_->Use();
             axes_->Draw(camera_, helperShader_);
+            grid_->Draw(camera_, helperShader_);
         }
 
     private:
@@ -93,6 +100,7 @@ namespace vivid {
         // Helper
         std::shared_ptr<Mesh> axes_;
         std::shared_ptr<Shader> helperShader_;
+        std::shared_ptr<Mesh> grid_;
 
         CameraPtr camera_;
 
