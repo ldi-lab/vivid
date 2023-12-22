@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <vector>
+#include <memory>
 #include <glm/glm.hpp>
 #include <glad/glad.h>
 #include "vivid/core/Object3D.h"

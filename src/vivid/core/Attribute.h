@@ -4,6 +4,8 @@
 #include <utility>
 #include <vector>
 #include <map>
+#include <memory>
+
 
 namespace vivid {
 
