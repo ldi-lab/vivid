@@ -48,6 +48,8 @@ private:
 
     void ExtractUniformLocations();
 
+    void CheckUniformName(const std::string &name) const;
+
     unsigned int programHandle_;
 
     std::map<int, std::string> attributeLocations_;

@@ -148,35 +148,48 @@ void Shader::Use() const {
 
 
 void Shader::SetBool(const std::string &name, bool value) const {
+    CheckUniformName(name);
     glUniform1i(glGetUniformLocation(programHandle_, name.c_str()), (int)value);
 }
 
 void Shader::SetInt(const std::string &name, int value) const {
+    CheckUniformName(name);
     glUniform1i(glGetUniformLocation(programHandle_, name.c_str()), value);
 }
 
 void Shader::SetFloat(const std::string &name, float value) const {
+    CheckUniformName(name);
     glUniform1f(glGetUniformLocation(programHandle_, name.c_str()), value);
 }
 
 void Shader::SetMat4(const std::string &name, const glm::mat4 &m) const {
+    CheckUniformName(name);
     glUniformMatrix4fv(glGetUniformLocation(programHandle_, name.c_str()),
                                  1, GL_FALSE, &m[0][0]);
 }
 
 void Shader::SetMat3(const std::string &name, const glm::mat3 &m) const {
+    CheckUniformName(name);
     glUniformMatrix3fv(glGetUniformLocation(programHandle_, name.c_str()),
                                  1, GL_FALSE, &m[0][0]);
 }
 
 void Shader::SetVec3(const std::string &name, const glm::vec3 &v) const {
+    CheckUniformName(name);
     glUniform3fv(glGetUniformLocation(programHandle_, name.c_str()), 1, &v[0]);
 }
 
 void Shader::SetVec4(const std::string &name, const glm::vec4 &v) const {
+    CheckUniformName(name);
     glUniform4fv(glGetUniformLocation(programHandle_, name.c_str()), 1, &v[0]);
 }
 
+
+void Shader::CheckUniformName(const std::string &name) const {
+    if (!HasUniform(name)) {
+        std::cerr << "Warning: uniform (" << name << ") not found in the shader!\n";
+    }
+}
 
 
 } // vivid
