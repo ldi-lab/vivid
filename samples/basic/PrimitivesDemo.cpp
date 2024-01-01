@@ -13,49 +13,53 @@
 #include "vivid/primitives/CylinderGeometry.h"
 #include "vivid/primitives/BoneGeometry.h"
 #include "vivid/extras/ShaderImpl.h"
+#include "vivid/extras/MaterialImpl.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace vivid {
     class PrimitivesDemoApp : public Application {
     public:
-        PrimitivesDemoApp() : Application(800, 600, "cube demo") {
+        PrimitivesDemoApp() : Application(800, 600, "Primitives Demo") {
             // Load shaders
-            shader_ = ShaderImpl::LoadShader("./shaders/SimpleColorShading.vert", "./shaders/SimpleColorShading.frag");
+            shader_ = ShaderImpl::GetBasicShadingShader();
             helperShader_ = ShaderImpl::GetVertexColoredShader();
+
+            // Create color material
+            auto material = std::make_shared<BasicColorMaterial>(glm::vec3(1, 0.8, 0.2), nullptr);
 
             // Create plane
             auto planeGeometry = std::make_shared<PlaneGeometry>(2, 2, 3, 3);
-            auto plane = std::make_shared<Mesh>(planeGeometry);
+            auto plane = std::make_shared<Mesh>(planeGeometry, nullptr);
             plane->GetTransform().SetPosition(Eigen::Vector3d(0, 0, -0.5));
 
             // Create box
             auto boxGeometry = std::make_shared<BoxGeometry>(1, 1, 1, 2, 2, 2);
-            auto box = std::make_shared<Mesh>(boxGeometry);
+            auto box = std::make_shared<Mesh>(boxGeometry, material);
             box->GetTransform().SetPosition(Eigen::Vector3d(2, -2, 0));
 
             // Create sphere
             auto sphereGeometry = std::make_shared<SphereGeometry>(0.5);
-            auto sphere = std::make_shared<Mesh>(sphereGeometry);
+            auto sphere = std::make_shared<Mesh>(sphereGeometry, material);
             sphere->GetTransform().SetPosition(Eigen::Vector3d(-2, -2, 1));
 
             // Axes helper
             auto axesGeometry = std::make_shared<AxesHelper>(3);
-            axes_ = std::make_shared<Mesh>(axesGeometry, GL_LINES);
+            axes_ = std::make_shared<Mesh>(axesGeometry, nullptr);
 
             // Grid Helper
             auto gridGeometry = std::make_shared<GridHelper>(0.5f, 100, 5, glm::vec3(0.5), glm::vec3(0.7));
-            grid_ = std::make_shared<Mesh>(gridGeometry, GL_LINES);
+            grid_ = std::make_shared<Mesh>(gridGeometry, nullptr);
             grid_->GetTransform().Rotate(Eigen::Vector3d(1, 0, 0), EIGEN_PI/2);
 
             // Cylinder
             auto cylinderGeometry = std::make_shared<CylinderGeometry>(0.5, 0.2, 1, 12, 4);
-            auto cylinder = std::make_shared<Mesh>(cylinderGeometry);
+            auto cylinder = std::make_shared<Mesh>(cylinderGeometry, material);
             cylinder->GetTransform().SetPosition(Eigen::Vector3d(-2, 2, 0));
             cylinder->GetTransform().Rotate(Eigen::Vector3d(1, 0, 0), EIGEN_PI/2);
 
             // Bone
             auto boneGeometry = std::make_shared<BoneGeometry>(2, 7, Eigen::Vector3f(0,0,1));
-            auto bone = std::make_shared<Mesh>(boneGeometry);
+            auto bone = std::make_shared<Mesh>(boneGeometry, material);
             bone->GetTransform().SetPosition(Eigen::Vector3d(2, 2, 0));
 
             meshes_ = {plane, box, sphere, cylinder, bone};
@@ -77,9 +81,6 @@ namespace vivid {
 
             controls_->Update();
 
-            // Bind shader
-            shader_->Use();
-
             // Draw mesh
             for (auto mesh : meshes_) {
                 mesh->Draw(camera_, shader_);
@@ -87,8 +88,8 @@ namespace vivid {
 
             // Draw helper
             helperShader_->Use();
-            axes_->Draw(camera_, helperShader_);
-            grid_->Draw(camera_, helperShader_);
+            axes_->Draw(camera_, helperShader_, GL_LINES);
+            grid_->Draw(camera_, helperShader_, GL_LINES);
         }
 
     private:

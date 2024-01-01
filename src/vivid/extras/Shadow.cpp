@@ -23,7 +23,7 @@ void Shadow::RenderDepthMap(const std::vector<MeshPtr> &castMeshes) {
     glClear(GL_DEPTH_BUFFER_BIT);
     depthShader_->Use();
     for (const auto &mesh : castMeshes) {
-        mesh->Draw(lightCam_, depthShader_);
+        mesh->Draw(lightCam_, depthShader_, GL_TRIANGLES, false);
     }
     depthFrameBuf_->Unbind();
 }

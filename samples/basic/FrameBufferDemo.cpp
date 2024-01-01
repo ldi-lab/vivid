@@ -6,6 +6,7 @@
 #include "vivid/core/Shader.h"
 #include "vivid/OrbitControls.h"
 #include "vivid/utils/GlmUtils.h"
+#include "vivid/extras//MaterialImpl.h"
 #include <glm/gtc/matrix_transform.hpp>
 #define STB_IMAGE_IMPLEMENTATION  //necessary for stb_image.h
 #include "vivid/utils/IOUtil.h"
@@ -25,16 +26,17 @@ namespace vivid {
 
             // Create texture
             std::cout << "create texture...\n";
-            auto diffuseTexture = IOUtil::LoadTexture("./models/fox.jpg");
+            auto colorTexture = IOUtil::LoadTexture("./models/fox.jpg");
 
             // Load model from json file
             std::cout << "create model...\n";
             fox_ = IOUtil::LoadJsonModel("./models/fox.json");
-            fox_->AddTexture("diffuseMap", diffuseTexture);
+            auto material = std::make_shared<BasicColorMaterial>(glm::vec3(1), colorTexture);
+            fox_->SetMaterial(material);
 
             // Load shader
             std::cout << "load shader...\n";
-            shader_ = ShaderImpl::LoadShader("./shaders/SimpleShading.vert", "./shaders/SimpleShading.frag");
+            shader_ = ShaderImpl::GetBasicShadingShader();
 
             // Camera
             std::cout << "create camera...\n";
@@ -52,7 +54,7 @@ namespace vivid {
 
             // Quad
             auto quadGeometry = std::make_shared<PlaneGeometry>(2, 2, 1, 1);
-            quad_ = std::make_shared<Mesh>(quadGeometry);
+            quad_ = std::make_shared<Mesh>(quadGeometry, nullptr);
             quadShader_ = ShaderImpl::LoadShader("./shaders/Passthrough.vert", "./shaders/WobbyTexture.frag");
 
             controls_ = std::make_shared<OrbitControls>(window_, camera_, Eigen::Vector3d(0, 1, 0), UpDir::Y);

@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include "vivid/core/Mesh.h"
+#include "vivid/core/Texture.h"
 
 namespace vivid {
 

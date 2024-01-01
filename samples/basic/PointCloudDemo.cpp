@@ -2,6 +2,7 @@
 #include <random>
 #include "vivid/vivid.h"
 #include "vivid/utils/GlmUtils.h"
+#include "vivid/extras/MaterialImpl.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace vivid {
@@ -9,7 +10,7 @@ class PointCloudDemoApp : public Application {
 public:
     PointCloudDemoApp() : Application(800, 600, "cube demo") {
         // Load shaders
-        shader_ = ShaderImpl::LoadShader("./shaders/PointCloud.vert", "./shaders/PointCloud.frag");
+        shader_ = ShaderImpl::GetVertexColoredShader();
 
         // create point cloud
         GeneratePointCloud(points_, colors_, numPoints_);
@@ -31,12 +32,8 @@ public:
 
         controls_->Update();
 
-        // Bind shader
-        shader_->Use();
-        shader_->SetFloat("uPointSize", pointSize_);
-
         // Draw mesh
-        pointCloud_->Draw(camera_, shader_);
+        pointCloud_->Draw(camera_, shader_, GL_POINTS);
 
         // Draw UI
         ui_.NewFrame();
@@ -46,7 +43,10 @@ public:
         ImGui::Text("FPS: ");
         ImGui::SameLine();
         ImGui::TextColored({0, 1, 0, 1}, "%d", static_cast<int>(ImGui::GetIO().Framerate));
-        ImGui::InputFloat("Point Size", &pointSize_, 1.0);
+        if (ImGui::InputFloat("Point Size", &pointSize_, 1.0)) {
+            auto material = std::dynamic_pointer_cast<PointCloudMaterial>(pointCloud_->GetMaterial());
+            material->SetPointSize(pointSize_);
+        }
         if (ImGui::InputInt("Point Count", &numPoints_, 10000)) {
             GeneratePointCloud(points_, colors_, numPoints_);
         }
@@ -79,7 +79,9 @@ public:
         auto geo = std::make_shared<Geometry>();
         geo->AddAttribute(std::make_shared<Attribute>(AttributeType::Position, 3, false, &points_));
         geo->AddAttribute(std::make_shared<Attribute>(AttributeType::Color, 3, false, &colors_));
-        pointCloud_ = std::make_shared<Mesh>(geo, GL_POINTS);
+
+        auto material = std::make_shared<PointCloudMaterial>(pointSize_);
+        pointCloud_ = std::make_shared<Mesh>(geo, material);
     }
 
 private:

@@ -9,6 +9,7 @@
 #include "vivid/utils/json.hpp"
 #include "vivid/utils/IOUtil.h"
 #include "vivid/extras/ShaderImpl.h"
+#include "vivid/extras/MaterialImpl.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 
@@ -43,8 +44,8 @@ public:
 
         // Mesh
         std::cout << "create mesh...\n";
-        forest_ = std::make_shared<Mesh>(forestGeo, GL_TRIANGLES , 0);
-        forest_->AddTexture("diffuseMap", diffuseTexture);
+        auto material = std::make_shared<BasicColorMaterial>(glm::vec3(1, 1, 1), diffuseTexture);
+        forest_ = std::make_shared<Mesh>(forestGeo, material);
 
         // Camera
         std::cout << "create camera...\n";

@@ -9,9 +9,9 @@ layout(location = 0) out vec3 color;
 
 // Values that stay constant for the whole mesh.
 uniform sampler2D shadowMap;
-uniform sampler2D diffuseMap;
-uniform bool hasDiffuseMap = false;
-uniform vec3 diffuseColor;
+uniform vec3 uColor;
+uniform sampler2D uColorMap;
+uniform bool uHasColorMap = false;
 
 vec2 poissonDisk[16] = vec2[](
     vec2( -0.94201624, -0.39906216 ),
@@ -33,9 +33,9 @@ vec2 poissonDisk[16] = vec2[](
 );
 
 void main(){
-    vec3 tex = diffuseColor;
-    if (hasDiffuseMap) {
-        tex = texture(diffuseMap, vUv).rgb;
+    vec3 tex = uColor;
+    if (uHasColorMap) {
+        tex = texture(uColorMap, vUv).rgb;
     }
 
     // the vShadowCoord.z / vShadowCoord.w is between [-1, 1], we need to

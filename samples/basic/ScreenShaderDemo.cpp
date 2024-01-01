@@ -51,9 +51,9 @@ namespace vivid {
 
 
             // Load shader
-            shader_ = ShaderImpl::LoadShader("./shaders/TriangleScreenShader.vert", "./shaders/TriangleScreenShader.frag");
+            shader_ = ShaderImpl::GetScreenShader();
 
-            triangle_ = std::make_shared<Mesh>(triangleGeometry);
+            triangle_ = std::make_shared<Mesh>(triangleGeometry, nullptr);
 
             camera_ = std::make_shared<Camera>();
 

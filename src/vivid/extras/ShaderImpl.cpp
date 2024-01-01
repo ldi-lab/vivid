@@ -16,12 +16,14 @@ layout(location = 1) in vec3 color;
 
 // uniforms
 uniform mat4 MVP;
+uniform float uPointSize = 1.0; // for rendering points
 
 // output
 out vec3 fragColor;
 
 void main() {
     gl_Position = MVP * vec4(position, 1.0);
+    gl_PointSize = uPointSize;
     fragColor = color;
 }
 
@@ -51,28 +53,96 @@ const std::string colored_basic_vs = R"(
 
 // input
 layout(location = 0) in vec3 position;
+layout(location = 1) in vec2 texCoord0;
 
 // uniforms
 uniform mat4 MVP;
 
+// output
+out vec2 vUv;
+
 void main() {
     gl_Position = MVP * vec4(position, 1.0);
+    vUv = texCoord0;
 }
 )";
 
 const std::string colored_basic_fs = R"(
 #version 330 core
 
+// input
+in vec2 vUv;
+
 // uniforms
-uniform vec3 materialColor = vec3(1.0, 1.0, 1.0);
+uniform vec3 uColor = vec3(1.0, 1.0, 1.0);
+uniform sampler2D uColorMap;
+uniform bool uHasColorMap = false;
 
 // output
 out vec3 color;
 
 void main() {
-    color = materialColor;
+    color = uColor;
+    if (uHasColorMap) {
+        color *= texture(uColorMap, vUv).rgb;
+    }
 }
 
+)";
+
+
+
+
+// ============= basic shading shader ===================
+const std::string basic_shading_vs = R"(
+#version 330 core
+
+// Input vertex data
+layout (location = 0) in vec3 position;
+layout (location = 1) in vec3 normal;
+layout (location = 2) in vec2 texCoord0;
+
+// Output data
+out vec2 vUv;
+out vec3 vNormal;   // normal vector in camera space
+
+// Uniforms
+uniform mat4 MVP;
+uniform mat3 normalMatrix;  // inverse transpose of modelview matrix, for transforming normals from object space to camera space
+
+
+void main() {
+    vUv = texCoord0;
+    vNormal = normalize(normalMatrix * normal);
+    gl_Position = MVP * vec4(position, 1.0);
+}
+)";
+
+const std::string basic_shading_fs = R"(
+#version 330 core
+
+// input values from the vertex shaders
+in vec2 vUv;
+in vec3 vNormal;
+
+// output data
+out vec3 color;
+
+// texture
+uniform vec3 uColor;
+uniform sampler2D uColorMap;
+uniform bool uHasColorMap = false;
+
+void main() {
+    vec3 light = vec3(0.5, 0.2, 1.0);
+    vec3 normal = normalize(vNormal);
+    vec3 tex = uColor;
+    if (uHasColorMap) {
+        tex = texture(uColorMap, vUv).rgb;
+    }
+    float shading = dot(normal, light) * 0.15;
+    color = tex + shading;
+}
 )";
 
 
@@ -237,6 +307,43 @@ void main() {
 )";
 
 
+
+
+// ============= 2D screen shader =============
+const std::string screen_shader_vs = R"(
+#version 330 core
+
+// input
+layout(location = 0) in vec3 position;
+layout(location = 1) in vec2 texCoord0;
+
+// output
+out vec2 vUv;
+
+void main()
+{
+    vUv = texCoord0;
+    gl_Position = vec4(position.xy, 0.0, 1.0);
+}
+)";
+
+const std::string screen_shader_fs = R"(
+#version 330 core
+
+in vec2 vUv;
+
+out vec3 color;
+
+uniform float uTime;
+uniform vec3 uColor;
+
+void main() {
+    color = vec3(0.3, 0.3, 0.3) + 0.3 * cos(vUv.xyx + uTime) + uColor;
+}
+)";
+
+
+
 ShaderPtr ShaderImpl::GetVertexColoredShader() {
     static ShaderPtr shader = std::make_shared<Shader>(vertex_colored_vs.c_str(), vertex_colored_fs.c_str());
     return shader;
@@ -244,6 +351,11 @@ ShaderPtr ShaderImpl::GetVertexColoredShader() {
 
 ShaderPtr ShaderImpl::GetColoredBasicShader() {
     static ShaderPtr shader = std::make_shared<Shader>(colored_basic_vs.c_str(), colored_basic_fs.c_str());
+    return shader;
+}
+
+ShaderPtr ShaderImpl::GetBasicShadingShader() {
+    static ShaderPtr shader = std::make_shared<Shader>(basic_shading_vs.c_str(), basic_shading_fs.c_str());
     return shader;
 }
 
@@ -259,6 +371,11 @@ ShaderPtr ShaderImpl::GetGroundShader() {
 
 ShaderPtr ShaderImpl::GetDepthShader() {
     static ShaderPtr shader = std::make_shared<Shader>(depth_vs.c_str(), depth_fs.c_str());
+    return shader;
+}
+
+ShaderPtr ShaderImpl::GetScreenShader() {
+    static ShaderPtr shader = std::make_shared<Shader>(screen_shader_vs.c_str(), screen_shader_fs.c_str());
     return shader;
 }
 

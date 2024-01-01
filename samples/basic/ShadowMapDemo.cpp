@@ -11,6 +11,7 @@
 #include "vivid/primitives/SphereGeometry.h"
 #include "vivid/extras/Shadow.h"
 #include "vivid/extras/ShaderImpl.h"
+#include "vivid/extras/MaterialImpl.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace vivid {
@@ -27,17 +28,18 @@ namespace vivid {
             // Create airplane
             airplane_ = IOUtil::LoadJsonModel("./models/airplane.json");
             auto diffuseTexture = IOUtil::LoadTexture("./models/airplane.jpg");
-            airplane_->AddTexture("diffuseMap", diffuseTexture);
+            airplane_->SetMaterial(std::make_shared<BasicColorMaterial>(glm::vec3(1), diffuseTexture));
 
             // Create ground
             auto groundGeometry = std::make_shared<PlaneGeometry>(10, 10, 4, 4);
-            ground_ = std::make_shared<Mesh>(groundGeometry);
+            auto groundMaterial = std::make_shared<BasicColorMaterial>(glm::vec3(0.3, 0.4, 0.5));
+            ground_ = std::make_shared<Mesh>(groundGeometry, groundMaterial);
             ground_->GetTransform().Rotate(Eigen::Vector3d(1, 0, 0), EIGEN_PI/2);
             ground_->GetTransform().SetPosition(Eigen::Vector3d(0, -2, 0));
 
             // Quad
             auto quadGeometry = std::make_shared<PlaneGeometry>(2, 2, 1, 1);
-            quad_ = std::make_shared<Mesh>(quadGeometry);
+            quad_ = std::make_shared<Mesh>(quadGeometry, nullptr);
 
             quadShader_ = ShaderImpl::LoadShader("./shaders/Passthrough.vert", "./shaders/SimpleTexture.frag");
 
@@ -92,11 +94,7 @@ namespace vivid {
             shader_->SetMat4("shadowCameraPV", lightCamPV);
 
             // Draw mesh
-            shader_->SetBool("hasDiffuseMap", true);
             airplane_->Draw(camera_, shader_);
-
-            shader_->SetBool("hasDiffuseMap", false);
-            shader_->SetVec3("diffuseColor", glm::vec3(0.3, 0.4, 0.5));
             ground_->Draw(camera_, shader_);
 
             // Render the depth texture to the plane

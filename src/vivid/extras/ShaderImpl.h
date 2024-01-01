@@ -13,11 +13,9 @@ public:
 
     static ShaderPtr GetColoredBasicShader();
 
-    static ShaderPtr GetTexturedBasicShader();
+    static ShaderPtr GetBasicShadingShader();
 
     static ShaderPtr GetColoredBlinnPhongShader();
-
-    static ShaderPtr GetTexturedBlinnPhongShader();
 
     static ShaderPtr GetPBRShader();
 
@@ -26,6 +24,8 @@ public:
     static ShaderPtr GetGroundShader();
 
     static ShaderPtr GetDepthShader();
+
+    static ShaderPtr GetScreenShader();
 
     static ShaderPtr LoadShader(const std::string& vertexShaderPath, const std::string& fragShaderPath);
 

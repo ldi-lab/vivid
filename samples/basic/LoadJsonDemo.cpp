@@ -9,6 +9,7 @@
 #include "vivid/utils/json.hpp"
 #include "vivid/utils/IOUtil.h"
 #include "vivid/extras/ShaderImpl.h"
+#include "vivid/extras/MaterialImpl.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 
@@ -25,7 +26,7 @@ public:
 
         // Create texture
         std::cout << "create texture...\n";
-        auto diffuseTexture = std::make_shared<Texture>(imgData_, imgWidth_, imgHeight_, imgChannels_);
+        auto colorTexture = std::make_shared<Texture>(imgData_, imgWidth_, imgHeight_, imgChannels_);
 
         // Attributes
         std::cout << "create texture...\n";
@@ -42,12 +43,15 @@ public:
 
         // Load shader
         std::cout << "load shader...\n";
-        shader_ = ShaderImpl::LoadShader("./shaders/SimpleShading.vert", "./shaders/SimpleShading.frag");
+        //shader_ = ShaderImpl::LoadShader("./shaders/SimpleShading.vert", "./shaders/SimpleShading.frag");
+        shader_ = ShaderImpl::GetBasicShadingShader();
+
+        // material
+        auto material = std::make_shared<BasicColorMaterial>(glm::vec3(0.5), colorTexture);
 
         // Mesh
         std::cout << "create mesh...\n";
-        fox_ = std::make_shared<Mesh>(foxGeometry, GL_TRIANGLES , 0);
-        fox_->AddTexture("diffuseMap", diffuseTexture);
+        fox_ = std::make_shared<Mesh>(foxGeometry, material);
 
         // Camera
         std::cout << "create camera...\n";

@@ -5,6 +5,7 @@
 #define STB_IMAGE_IMPLEMENTATION  //necessary for stb_image.h
 #include "vivid/utils/stb_image.h"
 #include "vivid/utils/json.hpp"
+#include "vivid/core/Material.h"
 
 namespace vivid {
 
@@ -74,7 +75,8 @@ bool IOUtil::ReadObjLegacy(const std::string &filePath, vivid::MeshPtr &mesh) {
     std::vector<float> positions, normals;
     LoadObj(filePath, positions, normals);
     auto geometry = std::make_shared<Geometry>(&positions, nullptr, &normals);
-    mesh = std::make_shared<Mesh>(geometry);
+//    auto material = std::make_shared<Material>();
+    mesh = std::make_shared<Mesh>(geometry, nullptr);
     return true;
 }
 
@@ -163,7 +165,7 @@ MeshPtr IOUtil::CreateMesh(const std::vector<unsigned int> &vertexIndices,
     }
 
     auto geometry = std::make_shared<Geometry>(&positions, nullptr, &normals);
-    auto mesh = std::make_shared<Mesh>(geometry);
+    auto mesh = std::make_shared<Mesh>(geometry, nullptr);
     return mesh;
 }
 
@@ -190,7 +192,7 @@ MeshPtr IOUtil::LoadJsonModel(const std::string &filePath) {
 
     // create mesh
     auto geo = std::make_shared<Geometry>(&positions, &uvs, &normals);
-    auto mesh = std::make_shared<Mesh>(geo);
+    auto mesh = std::make_shared<Mesh>(geo, nullptr);
     return mesh;
 }
 

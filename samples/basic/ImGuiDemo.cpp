@@ -3,6 +3,7 @@
 #include "vivid/core/Mesh.h"
 #include "vivid/core/Camera.h"
 #include "vivid/core/Shader.h"
+#include "vivid/core/Texture.h"
 #include "vivid/OrbitControls.h"
 #include "vivid/utils/GlmUtils.h"
 #include "vivid/primitives/PlaneGeometry.h"
