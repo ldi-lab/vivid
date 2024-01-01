@@ -148,16 +148,18 @@ void main() {
 
 
 // ============= colored blinn phong shader =============
-const std::string colored_blinn_phong_vs = R"(
+const std::string blinn_phong_vs = R"(
 #version 330 core
 
 // input
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
+layout(location = 2) in vec2 texCoord0;
 
 // output
 out vec3 vNormalC;      // fragment normal in camera space
 out vec3 vPositionC;    // fragment position in camera space
+out vec2 vUv;
 
 // Uniforms
 uniform mat4 MVP;
@@ -173,16 +175,19 @@ void main() {
 
     // position in the camera space
     vPositionC = (modelViewMatrix * vec4(position, 1)).xyz;
+
+    vUv = texCoord0;
 }
 
 )";
 
-const std::string colored_blinn_phong_fs = R"(
+const std::string blinn_phong_fs = R"(
 #version 330 core
 
 // Interpolated values from the vertex shaders
 in vec3 vNormalC;       // normal in camera space
 in vec3 vPositionC;     // position in camera space
+in vec2 vUv;
 
 // output data
 out vec3 color;
@@ -191,45 +196,64 @@ out vec3 color;
 struct Light {
     vec3 positionC;     // position in camera space
     vec3 color;
-    float intensity;
     int type;           // 0: directional, 1: point, 2: spot
 };
 
-struct Material {
-    vec3 diffuseColor;
-    vec3 specularColor;
-    float shininess;
-};
+uniform vec3 uDiffuseColor;
+uniform vec3 uSpecularColor;
+uniform float uShininess = 5.0;
 
-uniform Light light;
-uniform vec3 ambientColor;
-uniform Material material;
+uniform sampler2D uDiffuseMap;
+uniform bool uHasDiffuseMap = false;
+
+uniform sampler2D uNormalMap;
+uniform bool uHasNormalMap = false;
+
+uniform sampler2D uSpecularMap;
+uniform bool uHasSpecularMap = false;
+
+uniform Light uLight;
+uniform vec3 uAmbientColor;
 
 void main() {
     // light direction (from fragment to light)
     vec3 lightDir;
-    if (light.type == 0) {
-        lightDir = normalize(-light.positionC);
+    if (uLight.type == 0) {
+        lightDir = normalize(-uLight.positionC);
     } else {
-        lightDir = normalize(light.positionC - vPositionC);
+        lightDir = normalize(uLight.positionC - vPositionC);
     }
 
     // camera direction (from fragment to camera)
     vec3 viewDir = normalize(-vPositionC);
 
+    // normal
+    vec3 normal = normalize(vNormalC);
+    if (uHasNormalMap) {
+        //TODO: use normal map
+        normal = normalize(texture(uNormalMap, vUv).rgb * 2.0 - 1.0);
+    }
+
     // diffuse
-    float diffuse = max(dot(vNormalC, lightDir), 0.0);
+    float diffuseContrib = max(dot(normal, lightDir), 0.0);
 
     // specular
     vec3 halfwayDir = normalize(lightDir + viewDir);
-    float specular = pow(max(dot(vNormalC, halfwayDir), 0.0), material.shininess);
+    float specularContrib = pow(max(dot(normal, halfwayDir), 0.0), uShininess);
 
-    // ambient
-    vec3 ambient = ambientColor * material.diffuseColor;
+    // material diffuse and specular color
+    vec3 materialDiffuseColor = uDiffuseColor;
+    if (uHasDiffuseMap) {
+        materialDiffuseColor *= texture(uDiffuseMap, vUv).rgb;
+    }
+    vec3 materialSpecularColor = uSpecularColor;
+    if (uHasSpecularMap) {
+        materialSpecularColor *= texture(uSpecularMap, vUv).rgb;
+    }
 
     // final color
-    color = ambient + light.color * light.intensity
-          * (diffuse * material.diffuseColor + specular * material.specularColor);
+    color = uAmbientColor * materialDiffuseColor + uLight.color
+          * (diffuseContrib * materialDiffuseColor + specularContrib * materialSpecularColor);
 }
 )";
 
@@ -359,8 +383,9 @@ ShaderPtr ShaderImpl::GetBasicShadingShader() {
     return shader;
 }
 
-ShaderPtr ShaderImpl::GetColoredBlinnPhongShader() {
-    static ShaderPtr shader = std::make_shared<Shader>(colored_blinn_phong_vs.c_str(), colored_blinn_phong_fs.c_str());
+ShaderPtr ShaderImpl::GetBlinnPhongShader() {
+    static ShaderPtr shader = std::make_shared<Shader>(blinn_phong_vs.c_str(), blinn_phong_fs.c_str());
+    std::cout << "get blinn phong shader\n";
     return shader;
 }
 

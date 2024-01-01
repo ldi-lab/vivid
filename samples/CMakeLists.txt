@@ -10,7 +10,7 @@ add_executable(PrimitivesDemo basic/PrimitivesDemo.cpp)
 
 add_executable(ImGuiDemo basic/ImGuiDemo.cpp)
 
-add_executable(ColoredBlinnPhongDemo basic/ColoredBlinnPhongDemo.cpp)
+add_executable(BlinnPhongDemo basic/BlinnPhongDemo.cpp)
 
 add_executable(FrameBufferDemo basic/FrameBufferDemo.cpp)
 

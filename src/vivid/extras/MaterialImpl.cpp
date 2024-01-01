@@ -3,3 +3,10 @@
 //
 
 #include "MaterialImpl.h"
+
+namespace vivid {
+
+
+
+
+}

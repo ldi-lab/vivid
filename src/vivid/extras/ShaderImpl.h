@@ -15,7 +15,7 @@ public:
 
     static ShaderPtr GetBasicShadingShader();
 
-    static ShaderPtr GetColoredBlinnPhongShader();
+    static ShaderPtr GetBlinnPhongShader();
 
     static ShaderPtr GetPBRShader();
 

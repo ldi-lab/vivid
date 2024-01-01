@@ -126,6 +126,39 @@ public:
         return specularTexture_;
     }
 
+    void SetUniforms(const ShaderPtr &shader) override {
+        shader->SetVec3("uDiffuseColor", diffuseColor_);
+        shader->SetVec3("uSpecularColor", specularColor_);
+        shader->SetFloat("uShininess", shininess_);
+
+        if (diffuseTexture_) {
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, diffuseTexture_->GetHandle());
+            shader->SetInt("uDiffuseMap", 0);
+            shader->SetBool("uHasDiffuseMap", true);
+        } else {
+            shader->SetBool("uHasDiffuseMap", false);
+        }
+
+        if (specularTexture_) {
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, specularTexture_->GetHandle());
+            shader->SetInt("uSpecularMap", 1);
+            shader->SetBool("uHasSpecularMap", true);
+        } else {
+            shader->SetBool("uHasSpecularMap", false);
+        }
+
+        if (normalTexture_) {
+            glActiveTexture(GL_TEXTURE2);
+            glBindTexture(GL_TEXTURE_2D, normalTexture_->GetHandle());
+            shader->SetInt("uNormalMap", 2);
+            shader->SetBool("uHasNormalMap", true);
+        } else {
+            shader->SetBool("uHasNormalMap", false);
+        }
+    }
+
 private:
     glm::vec3 diffuseColor_;
     glm::vec3 specularColor_;
