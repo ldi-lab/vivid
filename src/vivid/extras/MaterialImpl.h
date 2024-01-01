@@ -172,18 +172,101 @@ private:
 
 class PbrMaterial : public Material {
 public:
-    PbrMaterial() = default;
+    PbrMaterial(const glm::vec3 &baseColor,
+                float roughness = 0.5f,
+                float metalness = 0.0f,
+                TexturePtr baseColorTex = nullptr,
+                TexturePtr rmoTex = nullptr,
+                TexturePtr opacityTex = nullptr,
+                TexturePtr emissiveTex = nullptr)
+        : Material(),
+          baseColor_(baseColor),
+          roughness_(roughness),
+          metalness_(metalness),
+          baseColorTexture_(std::move(baseColorTex)),
+          rmoTexture_(std::move(rmoTex)),
+          opacityTexture_(std::move(opacityTex)),
+          emissiveTexture(std::move(emissiveTex)) {}
+
+    void SetBaseColor(const glm::vec3& color) {
+        baseColor_ = color;
+    }
+
+    void SetRoughness(float roughness) {
+        roughness_ = roughness;
+    }
+
+    void SetMetalness(float metalness) {
+        metalness_ = metalness;
+    }
+
+    void SetBaseColorTexture(const TexturePtr& tex) {
+        baseColorTexture_ = tex;
+    }
+
+    void SetRmoTexture(const TexturePtr& tex) {
+        rmoTexture_ = tex;
+    }
+
+    void SetOpacityTexture(const TexturePtr& tex) {
+        opacityTexture_ = tex;
+    }
+
+    void SetEmissiveTexture(const TexturePtr& tex) {
+        emissiveTexture = tex;
+    }
+
+    void SetUniforms(const ShaderPtr &shader) override {
+        shader->SetVec3("uBaseColor", baseColor_);
+        shader->SetFloat("uRoughness", roughness_);
+        shader->SetFloat("uMetalness", metalness_);
+
+        if (baseColorTexture_) {
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, baseColorTexture_->GetHandle());
+            shader->SetInt("uBaseColorMap", 0);
+            shader->SetBool("uHasBaseColorMap", true);
+        } else {
+            shader->SetBool("uHasBaseColorMap", false);
+        }
+
+        if (rmoTexture_) {
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, rmoTexture_->GetHandle());
+            shader->SetInt("uRmoMap", 1);
+            shader->SetBool("uHasRmoMap", true);
+        } else {
+            shader->SetBool("uHasRmoMap", false);
+        }
+
+        if (opacityTexture_) {
+            glActiveTexture(GL_TEXTURE2);
+            glBindTexture(GL_TEXTURE_2D, opacityTexture_->GetHandle());
+            shader->SetInt("uOpacityMap", 2);
+            shader->SetBool("uHasOpacityMap", true);
+        } else {
+            shader->SetBool("uHasOpacityMap", false);
+        }
+
+        if (emissiveTexture) {
+            glActiveTexture(GL_TEXTURE3);
+            glBindTexture(GL_TEXTURE_2D, emissiveTexture->GetHandle());
+            shader->SetInt("uEmissiveMap", 3);
+            shader->SetBool("uHasEmissiveMap", true);
+        } else {
+            shader->SetBool("uHasEmissiveMap", false);
+        }
+    }
 
 private:
-    glm::vec3 albedo_;
-    float metallic_;
-    float roughness_;
-    float ao_;
+    glm::vec3 baseColor_;
+    float roughness_ = 0.5f;
+    float metalness_ = 0.0f;
 
-    TexturePtr albedoTexture_;
-    TexturePtr metallicTexture_;
-    TexturePtr roughnessTexture_;
-    TexturePtr aoTexture_;
+    TexturePtr baseColorTexture_;
+    TexturePtr rmoTexture_; // pack roughness, metallic, occlusion into one texture
+    TexturePtr opacityTexture_;
+    TexturePtr emissiveTexture;
 };
 
 

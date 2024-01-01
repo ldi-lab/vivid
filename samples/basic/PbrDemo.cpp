@@ -8,6 +8,7 @@
 #include "vivid/utils/IOUtil.h"
 #include "vivid/primitives/SphereGeometry.h"
 #include "vivid/extras/ShaderImpl.h"
+#include "vivid/extras/MaterialImpl.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace vivid {
@@ -21,7 +22,7 @@ public:
         SetWindowResizable(false);
 
         // Load shader
-        shader_ = ShaderImpl::LoadShader("./shaders/Pbr.vert", "./shaders/Pbr.frag");
+        shader_ = ShaderImpl::GetPBRShader();
 
         // IBL textures
         auto brdfLutTexture = IOUtil::LoadTexture("./models/car/lut.png");
@@ -49,7 +50,8 @@ public:
 
         // Create airplane
         auto sphereGeo = std::make_shared<SphereGeometry>(0.3f, 64, 64);
-        sphere_ = std::make_shared<Mesh>(sphereGeo);
+        auto sphereMaterial = std::make_shared<PbrMaterial>(glm::vec3(1));
+        sphere_ = std::make_shared<Mesh>(sphereGeo, sphereMaterial);
         sphere_->GetTransform().SetPosition({0, 1.0, 1.2});
 
 
@@ -84,23 +86,16 @@ public:
         shader_->SetInt("uLightCount", 1);
 
         // draw sphere
-        shader_->SetVec3("uBaseColor", baseColor_);
-        shader_->SetFloat("uMetalness", metalness_);
-        shader_->SetFloat("uRoughness", roughness_);
-        shader_->SetBool("uHasBaseColorMap", false);
-        shader_->SetBool("uHasRmoMap", false);
-        shader_->SetBool("uHasOpacityMap", false);
-        shader_->SetBool("uHasEmissiveMap", false);
+        auto sphereMaterial = std::dynamic_pointer_cast<PbrMaterial>(sphere_->GetMaterial());
+        sphereMaterial->SetBaseColor(baseColor_);
+        sphereMaterial->SetMetalness(metalness_);
+        sphereMaterial->SetRoughness(roughness_);
         sphere_->Draw(camera_, shader_);
 
         // draw car
         carExt_->GetTransform().Rotate({0, 1, 0}, 0.01);
         carExtInner_->SetTransform(carExt_->GetTransform());
         carInterior_->SetTransform(carExt_->GetTransform());
-        shader_->SetBool("uHasBaseColorMap", true);
-        shader_->SetBool("uHasRmoMap", true);
-        shader_->SetBool("uHasOpacityMap", true);
-        shader_->SetBool("uHasEmissiveMap", true);
         carInterior_->Draw(camera_, shader_);
         carExt_->Draw(camera_, shader_);
         carExtInner_->Draw(camera_, shader_);
@@ -122,38 +117,41 @@ public:
     void LoadExterior() {
         carExt_ = IOUtil::LoadJsonModel("./models/car/car-ext.json");
         carExtInner_ = IOUtil::LoadJsonModel("./models/car/car-ext-inner.json");
+        auto material = std::make_shared<PbrMaterial>(glm::vec3(1));
 
         auto baseColorTexture = IOUtil::LoadTexture("./models/car/car-ext-color.jpg");
-        carExt_->AddTexture("uBaseColorMap", baseColorTexture);
-        carExtInner_->AddTexture("uBaseColorMap", baseColorTexture);
+        material->SetBaseColorTexture(baseColorTexture);
 
         auto rmoTexture = IOUtil::LoadTexture("./models/car/car-ext-rmo.jpg");
-        carExt_->AddTexture("uRmoMap", rmoTexture);
-        carExtInner_->AddTexture("uRmoMap", rmoTexture);
+        material->SetRmoTexture(rmoTexture);
 
         auto opacityTexture = IOUtil::LoadTexture("./models/car/car-ext-opacity.jpg");
-        carExt_->AddTexture("uOpacityMap", opacityTexture);
-        carExtInner_->AddTexture("uOpacityMap", opacityTexture);
+        material->SetOpacityTexture(opacityTexture);
 
         auto emissiveTexture = IOUtil::LoadTexture("./models/car/car-ext-emissive.jpg");
-        carExt_->AddTexture("uEmissiveMap", emissiveTexture);
-        carExtInner_->AddTexture("uEmissiveMap", emissiveTexture);
+        material->SetEmissiveTexture(emissiveTexture);
+
+        carExt_->SetMaterial(material);
+        carExtInner_->SetMaterial(material);
     }
 
     void LoadInterior() {
         carInterior_ = IOUtil::LoadJsonModel("./models/car/car-int.json");
 
+        auto material = std::make_shared<PbrMaterial>(glm::vec3(1));
         auto baseColorTexture = IOUtil::LoadTexture("./models/car/car-int-color.jpg");
-        carInterior_->AddTexture("uBaseColorMap", baseColorTexture);
+        material->SetBaseColorTexture(baseColorTexture);
 
         auto rmoTexture = IOUtil::LoadTexture("./models/car/car-int-rmo.jpg");
-        carInterior_->AddTexture("uRmoMap", rmoTexture);
+        material->SetRmoTexture(rmoTexture);
 
         auto opacityTexture = IOUtil::LoadTexture("./models/car/white.jpg");
-        carInterior_->AddTexture("uOpacityMap", opacityTexture);
+        material->SetOpacityTexture(opacityTexture);
 
         auto emissiveTexture = IOUtil::LoadTexture("./models/car/black.jpg");
-        carInterior_->AddTexture("uEmissiveMap", emissiveTexture);
+        material->SetEmissiveTexture(emissiveTexture);
+
+        carInterior_->SetMaterial(material);
     }
 
 private:

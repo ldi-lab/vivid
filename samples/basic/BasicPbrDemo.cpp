@@ -23,7 +23,7 @@ public:
 
         // Create airplane
         auto sphereGeo = std::make_shared<SphereGeometry>(0.5f, 64, 64);
-        sphere_ = std::make_shared<Mesh>(sphereGeo);
+        sphere_ = std::make_shared<Mesh>(sphereGeo, nullptr);
 
         // Camera
         Eigen::Vector3d lookAtTarget(0, 0, 0);
